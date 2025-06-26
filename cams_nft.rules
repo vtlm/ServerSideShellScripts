@@ -1,0 +1,17 @@
+#!/usr/sbin/nft -f
+
+define extern_iface_ip=46.216.185.8
+
+table ip nat {
+        chain postrouting {
+                type nat hook postrouting priority srcnat; policy accept;
+                masquerade
+        }
+
+        chain prerouting {
+                type nat hook prerouting priority dstnat; policy accept;
+                ip daddr $extern_iface_ip tcp dport 554 dnat to 192.168.0.111:554
+                ip daddr $extern_iface_ip udp dport {6970, 6971} dnat to 192.168.0.111
+                ip daddr 192.168.0.14 udp sport { 6970, 6971 } dnat to 192.168.0.5
+        }
+}

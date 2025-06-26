@@ -1,0 +1,25 @@
+#!/bin/bash
+
+. ./functions.sh
+
+cnt=0
+
+for ((;;))
+do
+  get_modem_number
+
+  IFS='|:% ' read -r p1 p2 p3 signal_quality _ _ < <(mmcli -m $mn | grep signal)
+
+  echo "signal quality:  $p1 $p2 $p3 $signal_quality"
+
+  cpu_temp=$(cat /etc/armbianmonitor/datasources/soctemp)
+  #((cpu_temp=cpu_temp/1000.0|bc))
+  echo "cpu_temp: $cpu_temp"
+
+  echo "modem_signal_quality $signal_quality" | curl --data-binary @- http://192.168.0.12:8428/api/v1/import/prometheus
+  echo "cpu_temperature $cpu_temp" | curl --data-binary @- http://192.168.0.12:8428/api/v1/import/prometheus
+  echo "my_metric_cnt $cnt" | curl --data-binary @- http://192.168.0.12:8428/api/v1/import/prometheus
+  ((cnt=cnt+1))
+  sleep 4
+done
+ 

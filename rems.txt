@@ -1,0 +1,6 @@
+#currently for mqtt forward:
+
+sudo ./recheck_modem_mbim.sh 
+sudo ./my_firewall.sh wwan0 eth0
+sudo nft add rule filter input tcp dport 1883  tcp flags 0xff accept
+sudo ./cam_forw_nft.sh 46.216.215.213
