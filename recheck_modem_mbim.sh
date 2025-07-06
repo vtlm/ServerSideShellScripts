@@ -10,8 +10,13 @@ prev_ip4=""
 
 
 reconnect_modem(){
-    mbim-network /dev/cdc-wdm0 stop |grep succes
+    printf "\nReconnect modem\n"
+    printf "\nStop mbim network\n"
+    res=$(mbim-network /dev/cdc-wdm0 stop)
+    printf "\nResult of mbim stop %s\n" $((res))
+# |grep succes
     sleep 4
+    printf "\nStart mbim network\n"
     mbim-network /dev/cdc-wdm0 start |grep succes
     ((modem_reconnect_cnt=modem_reconnect_cnt+1))
 }
@@ -19,7 +24,7 @@ reconnect_modem(){
 
 check_usb_cdc(){
     cdc_line_cnt=$(lsusb -t |grep mbim |wc -l)
-    printf "\nlsusb cdc drivers %d\n" $((cdc_line_cnt))
+    printf "\nlsusb cdc drivers total lines: %d\n" $((cdc_line_cnt))
 
     if [[ $((cdc_line_cnt)) -ne 0 ]]; then
         printf "\nlsusb cdc drivers %d\n" $((cdc_line_cnt))
@@ -63,11 +68,11 @@ do
     printf "usb_cdc_presents %d" $((usb_cdc_presents))
 
     if [[ $((usb_cdc_presents)) = 1 ]]; then
-        printf "\n cdc=1"
+        printf "\ncdc=1"
         
         # bearer_ip4=$(mmcli -m $mn -b $bearer_number |grep "address" |grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
         bearer_ip4=$( mbimcli -d /dev/cdc-wdm0 -p --query-ip-configuration= |grep "IP" |grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}/[0-9]{1,2}")
-        echo "\nBearer IPv4:" $bearer_ip4 
+    #    printf "\nBearer IPv4:" $((bearer_ip4)) 
 
         if [ "$bearer_ip4" == "" ]; then
             echo "Bearer IPv4 is empty:" $bearer_ip4 
