@@ -8,12 +8,13 @@ prev_ip4=""
 #./set_iptables eth0 wwan0
 #./set_forward_hass
 
+. ./functions.sh
 
 reconnect_modem(){
-    printf "\nReconnect modem\n"
-    printf "\nStop mbim network\n"
+#    printf "\nReconnect modem\n"
+#    printf "\nStop mbim network\n"
     res=$(mbim-network /dev/cdc-wdm0 stop)
-    printf "\nResult of mbim stop %s\n" $((res))
+	printf "\nResult of mbim stop %s\n" "${res[@]}"
 # |grep succes
     sleep 4
     printf "\nStart mbim network\n"
@@ -52,6 +53,7 @@ restart_wwan0() {
 
     prev_ip4=$bearer_ip4
     # ((prev_ip4=bearer_ip4))
+    set_mqtt_forward $bearer_ip4
 }
 
 
@@ -75,7 +77,7 @@ do
     #    printf "\nBearer IPv4:" $((bearer_ip4)) 
 
         if [ "$bearer_ip4" == "" ]; then
-            echo "Bearer IPv4 is empty:" $bearer_ip4 
+#           printf "/nBearer IPv4 is empty:" $((bearer_ip4))
             reconnect_modem
 
         else
