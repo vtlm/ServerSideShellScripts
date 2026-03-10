@@ -1,0 +1,6 @@
+#!/bin/bash
+iptables -A FORWARD -i wwan0 -o eth0 -p tcp --syn --dport 8123 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -i wwan0 -o eth0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -i eth0 -o wwan0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -t nat -A PREROUTING -i wwan0 -p tcp --dport 8123 -j DNAT --to-destination 192.168.0.12
+# iptables -t nat -A POSTROUTING -o eth0 -p tcp --dport 8123 -d 192.168.0.11 -j SNAT --to-source $1
