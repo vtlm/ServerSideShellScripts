@@ -4,3 +4,47 @@ sudo ./recheck_modem_mbim.sh
 sudo ./my_firewall.sh wwan0 eth0
 sudo nft add rule filter input tcp dport 1883  tcp flags 0xff accept
 sudo ./cam_forw_nft.sh 46.216.215.213
+
+
+####
+start mbim-network before stop 
+
+v@orangepioneplus:~/ServerSideShellScripts$ sudo mbim-network /dev/cdc-wdm0 stop
+Loading profile at /etc/mbim-network.conf...
+    APN: internet.mts.by
+    APN auth protocol: unset
+    APN user: unset
+    APN password: unset
+    mbim-proxy: yes
+Stopping network with 'mbimcli -d /dev/cdc-wdm0 --disconnect --device-open-proxy'...
+error: operation failed: ContextNotActivated
+Network stop failed
+
+v@orangepioneplus:~/ServerSideShellScripts$ sudo mbim-network /dev/cdc-wdm0 start
+Loading profile at /etc/mbim-network.conf...
+    APN: internet.mts.by
+    APN auth protocol: unset
+    APN user: unset
+    APN password: unset
+    mbim-proxy: yes
+Querying subscriber ready status 'mbimcli -d /dev/cdc-wdm0 --query-subscriber-ready-status --device-open-proxy'...
+[/dev/cdc-wdm0] Subscriber ready status retrieved: Ready state: 'initialized' Subscriber ID: '257027016157952' SIM ICCID: '89375027010061579528' Ready info: 'none' Telephone numbers: (0) 'unknown'
+Querying registration state 'mbimcli -d /dev/cdc-wdm0 --query-registration-state --device-open-proxy'...
+[/dev/cdc-wdm0] Registration status: Network error: 'none' Register state: 'home' Register mode: 'automatic' Available data classes: 'lte' Current cellular class: 'gsm' Provider ID: '25702' Provider name: 'MTS BY' Roaming text: 'unknown' Registration flags: 'packet-service-automatic-attach'
+Attaching to packet service with 'mbimcli -d /dev/cdc-wdm0 --attach-packet-service --device-open-proxy'...
+[/dev/cdc-wdm0] Successfully attached to packet service [/dev/cdc-wdm0] Packet service status: Network error: 'none' Packet service state: 'attached' Available data classes: 'lte' Uplink speed: '50000000 bps' Downlink speed: '150000000 bps'
+Starting network with 'mbimcli -d /dev/cdc-wdm0 --connect=apn='internet.mts.by' --device-open-proxy'...
+warning: key 'apn' is deprecated, use 'access-string' instead
+Network started successfully
+v@orangepioneplus:~/ServerSideShellScripts$ sudo mbim-network /dev/cdc-wdm0 stop
+Loading profile at /etc/mbim-network.conf...
+    APN: internet.mts.by
+    APN auth protocol: unset
+    APN user: unset
+    APN password: unset
+    mbim-proxy: yes
+Stopping network with 'mbimcli -d /dev/cdc-wdm0 --disconnect --device-open-proxy'...
+Network stopped successfully
+v@orangepioneplus:~/ServerSideShellScripts$ 
+
+
