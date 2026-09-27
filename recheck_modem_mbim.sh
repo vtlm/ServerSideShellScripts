@@ -1,7 +1,11 @@
 #!/bin/bash
 
+
+sysctl net.ipv4.ip_forward=1
+
 cnt=0
 modem_reconnect_cnt=0
+ip_addr_changes_cnt=0
 prev_ip4=""
 
 
@@ -56,7 +60,11 @@ restart_wwan0() {
 
     prev_ip4=$bearer_ip4
     # ((prev_ip4=bearer_ip4))
-    set_mqtt_forward $bearer_ip4
+    ./nft/my_firewall.sh wwan0 eth0
+
+    set_ports_forward $bearer_ip4
+
+    ((ip_addr_changes_cnt=ip_addr_changes_cnt+1))
 }
 
 
@@ -65,12 +73,12 @@ for ((;;))
 do
 
     printf "\ncycle %d\n" $cnt
-    printf "\nmodem_reconnect_cnt %d\n" $modem_reconnect_cnt
+    printf "\nmodem_reconnect_cnt %d ip addr changes: %d\n" $modem_reconnect_cnt $ip_addr_changes_cnt
     ((cnt=cnt+1))
 
     check_usb_cdc
 
-    printf "usb_cdc_presents %d" $((usb_cdc_presents))
+    printf "usb_cdc_presents %d\n" $((usb_cdc_presents))
 
     if [[ $((usb_cdc_presents)) = 1 ]]; then
         printf "\ncdc=1"
