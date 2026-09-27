@@ -79,5 +79,4 @@ ${nft} add rule filter output iif lo accept
 ${nft} add rule nat postrouting masquerade
 
 #MQTT
-${nft} add rule filter input tcp dport 1883 tcp flags 0xff accept
-
+${nft} add rule filter input tcp dport {1883, 8123} tcp flags 0xff accept

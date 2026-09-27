@@ -8,13 +8,14 @@ prev_ip4=""
 #./set_iptables eth0 wwan0
 #./set_forward_hass
 
+. ./functions.sh
 
 . ./functions.sh
 
 
 reconnect_modem(){
-    printf "\nReconnect modem\n"
-    printf "\nStop mbim network\n"
+#    printf "\nReconnect modem\n"
+#    printf "\nStop mbim network\n"
     res=$(mbim-network /dev/cdc-wdm0 stop)
     printf "\nResult of mbim stop %s\n" "${res[@]}"
 # |grep succes
@@ -55,7 +56,7 @@ restart_wwan0() {
 
     prev_ip4=$bearer_ip4
     # ((prev_ip4=bearer_ip4))
-    set_forward_mqrr $bearer_ip4
+    set_mqtt_forward $bearer_ip4
 }
 
 
@@ -73,13 +74,13 @@ do
 
     if [[ $((usb_cdc_presents)) = 1 ]]; then
         printf "\ncdc=1"
-        
+
         # bearer_ip4=$(mmcli -m $mn -b $bearer_number |grep "address" |grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
         bearer_ip4=$( mbimcli -d /dev/cdc-wdm0 -p --query-ip-configuration= |grep "IP" |grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}/[0-9]{1,2}")
-    #    printf "\nBearer IPv4:" $((bearer_ip4)) 
+    #    printf "\nBearer IPv4:" $((bearer_ip4))
 
         if [ "$bearer_ip4" == "" ]; then
-            echo "Bearer IPv4 is empty:" $bearer_ip4 
+#           printf "/nBearer IPv4 is empty:" $((bearer_ip4))
             reconnect_modem
 
         else
@@ -96,7 +97,7 @@ do
             fi
 
 
-        fi 
+        fi
 
     fi
 
