@@ -9,11 +9,14 @@ prev_ip4=""
 #./set_forward_hass
 
 
+. ./functions.sh
+
+
 reconnect_modem(){
     printf "\nReconnect modem\n"
     printf "\nStop mbim network\n"
     res=$(mbim-network /dev/cdc-wdm0 stop)
-    printf "\nResult of mbim stop %s\n" $((res))
+    printf "\nResult of mbim stop %s\n" "${res[@]}"
 # |grep succes
     sleep 4
     printf "\nStart mbim network\n"
@@ -52,6 +55,7 @@ restart_wwan0() {
 
     prev_ip4=$bearer_ip4
     # ((prev_ip4=bearer_ip4))
+    set_forward_mqrr $bearer_ip4
 }
 
 

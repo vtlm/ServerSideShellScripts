@@ -65,6 +65,8 @@ ${nft} add rule filter input iif lo accept
 
 #${nft} add rule filter input counter drop
 
+
+
 #OUTPUT CHAIN RULESET
 #=======================================================
 # allow output from us for new, or existing connections.
@@ -75,3 +77,7 @@ ${nft} add rule filter output iif lo accept
 
 #SET MASQUERADING DIRECTIVE
 ${nft} add rule nat postrouting masquerade
+
+#MQTT
+${nft} add rule filter input tcp dport 1883 tcp flags 0xff accept
+
